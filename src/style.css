@@ -1,5 +1,4 @@
 .pixiv-quick-tag-work-menu {
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -8,10 +7,63 @@
   border: 1px solid #cccccc55;
   border-radius: 0.5rem;
 
+  .pixiv-quick-tag-pinned-tags-section {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    &:empty {
+      display: none;
+    }
+
+    .pixiv-quick-tag-pinned-tag {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      max-width: 100%;
+      border-radius: 0.25rem;
+      border: 1px solid #cccccc55;
+
+      &:has(button[aria-pressed='true']) {
+        background-color: #cccccc55;
+      }
+
+      & > :first-child {
+        flex-grow: 1;
+        min-width: 0;
+        padding: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border: none;
+        font-size: 0.85rem;
+      }
+
+      & > :last-child {
+        width: 1.3rem;
+        height: 1.3rem;
+        margin-right: 0.25rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+      }
+    }
+  }
+
   .pixiv-quick-tag-input-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
+    .pixiv-quick-tag-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+
+      input {
+        flex-grow: 1;
+      }
+    }
   }
 
   .pixiv-quick-tag-apply-section {
@@ -24,8 +76,7 @@
     }
   }
 
-  input[type='text'],
-  button {
+  input[type='text'] {
     min-width: 0;
     height: 1.75rem;
     background-color: transparent;
@@ -44,6 +95,17 @@
   }
 
   button {
+    height: 1.75rem;
+    background-color: transparent;
+    padding: 0 0.5rem;
+    border: 1px solid #cccccc55;
+    border-radius: 0.25rem;
+
+    &:focus {
+      outline: none;
+      border-color: #cccccc;
+    }
+
     &:enabled:hover {
       background-color: #cccccc55;
     }
@@ -52,5 +114,9 @@
       border-color: #ff2c2c82;
       color: #ff2c2c;
     }
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
