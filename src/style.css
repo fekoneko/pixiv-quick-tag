@@ -43,7 +43,14 @@
     }
   }
 
-  button:hover {
-    background-color: #cccccc55;
+  button {
+    &:enabled:hover {
+      background-color: #cccccc55;
+    }
+
+    &[aria-invalid='true'] {
+      border-color: #ff2c2c82;
+      color: #ff2c2c;
+    }
   }
 }

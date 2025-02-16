@@ -1,7 +1,21 @@
 const root = document.getElementById('root');
 if (!root) throw new Error('Pixiv Quick Tag could not find #root element');
 
-let rootObserver;
+const updateBookmark = (workId, tags, isPrivate) =>
+  fetch('https://www.pixiv.net/ajax/illusts/bookmarks/add', {
+    credentials: 'include',
+    headers: {
+      'content-type': 'application/json',
+      'x-csrf-token': localStorage.getItem('xzToken'),
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      illust_id: workId,
+      restrict: isPrivate ? 1 : 0,
+      comment: '',
+      tags: tags,
+    }),
+  });
 
 const appendWorkMenuInputSection = (workMenu) => {
   const inputSection = document.createElement('div');
@@ -12,7 +26,7 @@ const appendWorkMenuInputSection = (workMenu) => {
     const input = document.createElement('input');
     input.type = 'text';
     input.name = 'tags';
-    input.placeholder = 'Add tag...';
+    input.placeholder = 'Custom tag...';
     input.oninput = () => {
       if (input.value.length > 0 && inputSection.lastChild?.value !== '') {
         appendInput();
@@ -38,6 +52,7 @@ const appendWorkMenuApplySection = (workMenu) => {
   applySection.appendChild(applyButton);
 
   const privateCheckbox = document.createElement('input');
+  privateCheckbox.name = 'private';
   privateCheckbox.type = 'checkbox';
   privateCheckbox.id = 'pixiv-quick-tag-private-checkbox';
   applySection.appendChild(privateCheckbox);
@@ -51,8 +66,9 @@ const appendWorkMenuApplySection = (workMenu) => {
 const appendWorkMenus = () => {
   const workLinks = document.querySelectorAll('a[data-gtm-value][href^="/artworks/"]');
   workLinks.forEach((workLink) => {
-    const workId = workLink.href.split('/').pop();
     const workContainer = workLink.parentElement.parentElement.parentElement;
+    const hasMenu = workContainer.getElementsByClassName('pixiv-quick-tag-work-menu').length > 0;
+    if (hasMenu) return;
 
     const workMenu = document.createElement('form');
     workContainer.appendChild(workMenu);
@@ -61,9 +77,29 @@ const appendWorkMenus = () => {
     appendWorkMenuInputSection(workMenu);
     appendWorkMenuApplySection(workMenu);
 
-    rootObserver.disconnect();
+    workMenu.onsubmit = async (event) => {
+      event.preventDefault();
+
+      const applyButton = workMenu.querySelector('button[type="submit"]');
+      applyButton.disabled = true;
+      applyButton.ariaInvalid = false;
+
+      const workId = workLink.href.split('/').pop();
+      const formData = new FormData(workMenu);
+      const tags = formData.getAll('tags').slice(0, -1);
+      const isPrivate = formData.get('private') === 'on';
+
+      const response = await updateBookmark(workId, tags, isPrivate);
+      if (response.ok) {
+        applyButton.textContent = 'Applied';
+      } else {
+        applyButton.textContent = 'Error';
+        applyButton.ariaInvalid = true;
+      }
+      applyButton.disabled = false;
+    };
   });
 };
 
-rootObserver = new MutationObserver(appendWorkMenus);
+const rootObserver = new MutationObserver(appendWorkMenus);
 rootObserver.observe(root, { childList: true, subtree: true });
