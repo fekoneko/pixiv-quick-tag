@@ -2,11 +2,18 @@
   "manifest_version": 2,
   "name": "Pixiv Quick Tag",
   "version": "1.0",
+  "applications": {
+    "gecko": {
+      "id": "pixiv-quick-tag@fekoneko.github.io",
+      "strict_min_version": "60.0"
+    }
+  },
   "description": "Allows to quickly add tags when you bookmark a work on Pixiv. No need to leave the page.",
   "icons": {
     "48": "icons/icon-48.png",
     "96": "icons/icon-96.png"
   },
+  "permissions": ["*://*.pixiv.net/*"],
   "content_scripts": [
     {
       "matches": ["*://*.pixiv.net/*"],
