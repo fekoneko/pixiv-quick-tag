@@ -1,4 +1,4 @@
-.pixiv-quick-tag-buttons {
+.pixiv-quick-tag-work-menu {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -8,8 +8,26 @@
   border: 1px solid #cccccc55;
   border-radius: 0.5rem;
 
-  input {
+  .pixiv-quick-tag-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pixiv-quick-tag-apply-section {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    button {
+      flex-grow: 1;
+    }
+  }
+
+  input[type='text'],
+  button {
     min-width: 0;
+    height: 1.75rem;
     background-color: transparent;
     padding: 0 0.5rem;
     border: 1px solid #cccccc55;
@@ -18,15 +36,14 @@
     &::placeholder {
       color: #cccccc55;
     }
+
+    &:focus {
+      outline: none;
+      border-color: #cccccc;
+    }
   }
 
-  button {
-    flex-grow: 1;
-  }
-
-  .apply-section {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+  button:hover {
+    background-color: #cccccc55;
   }
 }
