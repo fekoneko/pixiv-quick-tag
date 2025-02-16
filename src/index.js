@@ -52,49 +52,59 @@ const appendPinnedTagsSection = (workMenu) => {
   workMenu.appendChild(pinnedTagsSection);
 
   const pinnedTags = getPinnedTags();
-  pinnedTags.forEach((tag) => appendPinnedTagButton(workMenu, tag));
+  pinnedTags.forEach((tag) => appendPinnedTagButtons(workMenu, tag));
 };
 
-const appendPinnedTagButton = (workMenu, tag) => {
-  let pinnedTagsSection = workMenu.querySelector('.pixiv-quick-tag-pinned-tags-section');
-  if (!pinnedTagsSection) return;
+const removePinnedTagButtons = (container, tag) => {
+  let tagButtonContainers = container.querySelectorAll('.pixiv-quick-tag-pinned-tag');
 
-  const tagContainer = document.createElement('div');
-  tagContainer.classList.add('pixiv-quick-tag-pinned-tag');
-  pinnedTagsSection.appendChild(tagContainer);
+  tagButtonContainers.forEach((tagButtonContainer) => {
+    const tagButton = tagButtonContainer.firstChild;
+    if (tagButton?.textContent === tag) tagButtonContainer.remove();
+  });
+};
 
-  const tagButton = document.createElement('button');
-  tagButton.type = 'button';
-  tagButton.textContent = tag;
-  tagButton.ariaPressed = 'false';
-  tagContainer.appendChild(tagButton);
+const appendPinnedTagButtons = (container, tag) => {
+  let pinnedTagsSections = container.querySelectorAll('.pixiv-quick-tag-pinned-tags-section');
 
-  const removeTagButton = document.createElement('button');
-  removeTagButton.type = 'button';
-  removeTagButton.textContent = '×';
-  tagContainer.appendChild(removeTagButton);
+  pinnedTagsSections.forEach((pinnedTagsSection) => {
+    const tagButtonContainer = document.createElement('div');
+    tagButtonContainer.classList.add('pixiv-quick-tag-pinned-tag');
+    pinnedTagsSection.appendChild(tagButtonContainer);
 
-  tagButton.onclick = () => {
-    const isAriaPressed = tagButton.ariaPressed === 'true';
+    const tagButton = document.createElement('button');
+    tagButton.type = 'button';
+    tagButton.textContent = tag;
+    tagButton.ariaPressed = 'false';
+    tagButtonContainer.appendChild(tagButton);
 
-    if (isAriaPressed) {
-      tagButton.ariaPressed = 'false';
-      const hiddenInput = tagContainer.querySelector('input');
-      hiddenInput?.remove();
-    } else {
-      tagButton.ariaPressed = 'true';
-      const hiddenInput = document.createElement('input');
-      hiddenInput.type = 'text';
-      hiddenInput.name = 'tags';
-      hiddenInput.value = tag;
-      hiddenInput.hidden = true;
-      tagContainer.appendChild(hiddenInput);
-    }
-  };
+    const removeTagButton = document.createElement('button');
+    removeTagButton.type = 'button';
+    removeTagButton.textContent = '×';
+    tagButtonContainer.appendChild(removeTagButton);
 
-  removeTagButton.onclick = () => {
-    if (removePinnedTag(tag)) tagContainer.remove();
-  };
+    tagButton.onclick = () => {
+      const isAriaPressed = tagButton.ariaPressed === 'true';
+
+      if (isAriaPressed) {
+        tagButton.ariaPressed = 'false';
+        const hiddenInput = tagButtonContainer.querySelector('input');
+        hiddenInput?.remove();
+      } else {
+        tagButton.ariaPressed = 'true';
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'text';
+        hiddenInput.name = 'tags';
+        hiddenInput.value = tag;
+        hiddenInput.hidden = true;
+        tagButtonContainer.appendChild(hiddenInput);
+      }
+    };
+
+    removeTagButton.onclick = () => {
+      if (removePinnedTag(tag)) removePinnedTagButtons(root, tag);
+    };
+  });
 };
 
 const appendInputSection = (workMenu) => {
@@ -136,7 +146,7 @@ const appendInputSection = (workMenu) => {
     pinButton.onclick = () => {
       if (!appendPinnedTag(input.value)) return;
 
-      appendPinnedTagButton(root, input.value);
+      appendPinnedTagButtons(root, input.value);
       removeInput(inputContainer);
       if (inputSection.childNodes.length === 0) appendInput();
     };
