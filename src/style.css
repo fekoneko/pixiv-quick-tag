@@ -1,0 +1,32 @@
+.pixiv-quick-tag-buttons {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #cccccc55;
+  border-radius: 0.5rem;
+
+  input {
+    min-width: 0;
+    background-color: transparent;
+    padding: 0 0.5rem;
+    border: 1px solid #cccccc55;
+    border-radius: 0.25rem;
+
+    &::placeholder {
+      color: #cccccc55;
+    }
+  }
+
+  button {
+    flex-grow: 1;
+  }
+
+  .apply-section {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
