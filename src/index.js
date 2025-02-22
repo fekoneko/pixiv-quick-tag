@@ -186,8 +186,12 @@ const appendWorkMenus = () => {
 
     workContainer.classList.add('pixiv-quick-tag-work-container');
 
+    const workMenuWrapper = document.createElement('div');
+    workContainer.appendChild(workMenuWrapper);
+    workMenuWrapper.classList.add('pixiv-quick-tag-work-menu-wrapper');
+
     const workMenu = document.createElement('form');
-    workContainer.appendChild(workMenu);
+    workMenuWrapper.appendChild(workMenu);
     workMenu.classList.add('pixiv-quick-tag-work-menu');
 
     appendPinnedTagsSection(workMenu);
