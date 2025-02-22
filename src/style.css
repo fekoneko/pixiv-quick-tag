@@ -11,13 +11,13 @@
     top: 100%;
     left: 0;
     z-index: 100;
+    width: 100%;
     padding-top: 0.5rem;
 
     .pixiv-quick-tag-work-menu {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      width: 100%;
       padding: 0.5rem;
       background-color: #1f1f1f;
       border: 1px solid #cccccc55;
