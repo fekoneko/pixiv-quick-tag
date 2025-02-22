@@ -1,122 +1,141 @@
-.pixiv-quick-tag-work-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid #cccccc55;
-  border-radius: 0.5rem;
+.pixiv-quick-tag-work-container {
+  position: relative;
 
-  .pixiv-quick-tag-pinned-tags-section {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-
-    &:empty {
-      display: none;
-    }
-
-    .pixiv-quick-tag-pinned-tag {
-      display: flex;
-      align-items: center;
-      flex-grow: 1;
-      max-width: 100%;
-      border-radius: 0.25rem;
-      border: 1px solid #cccccc55;
-
-      &:has(button[aria-pressed='true']) {
-        background-color: #cccccc55;
-      }
-
-      & > :first-child {
-        flex-grow: 1;
-        min-width: 0;
-        padding: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        border: none;
-        font-size: 0.85rem;
-      }
-
-      & > :last-child {
-        width: 1.3rem;
-        height: 1.3rem;
-        margin-right: 0.25rem;
-        padding: 0;
-        border: none;
-        border-radius: 50%;
-      }
-    }
+  &:hover .pixiv-quick-tag-work-menu {
+    visibility: visible;
   }
 
-  .pixiv-quick-tag-input-section {
+  .pixiv-quick-tag-work-menu {
+    visibility: hidden;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 100;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #1f1f1f;
+    border: 1px solid #cccccc55;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem #00000055;
 
-    .pixiv-quick-tag-input-container {
+    .pixiv-quick-tag-pinned-tags-section {
       display: flex;
       gap: 0.5rem;
       align-items: center;
+      flex-wrap: wrap;
 
-      input {
+      &:empty {
+        display: none;
+      }
+
+      .pixiv-quick-tag-pinned-tag {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        max-width: 100%;
+        border-radius: 0.25rem;
+        border: 1px solid #cccccc55;
+
+        &:has(button[aria-pressed='true']) {
+          background-color: #cccccc55;
+        }
+
+        & > :first-child {
+          flex-grow: 1;
+          min-width: 0;
+          padding: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          border: none;
+          font-size: 0.85rem;
+        }
+
+        & > :last-child {
+          width: 1.3rem;
+          height: 1.3rem;
+          margin-right: 0.25rem;
+          padding: 0;
+          border: none;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    .pixiv-quick-tag-input-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .pixiv-quick-tag-input-container {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        input {
+          flex-grow: 1;
+        }
+      }
+    }
+
+    .pixiv-quick-tag-apply-section {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      height: 1.75rem;
+      overflow: hidden;
+
+      button {
         flex-grow: 1;
       }
     }
-  }
 
-  .pixiv-quick-tag-apply-section {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+    input[type='text'] {
+      min-width: 0;
+      height: 1.75rem;
+      background-color: transparent;
+      padding: 0 0.5rem;
+      border: 1px solid #cccccc55;
+      border-radius: 0.25rem;
+
+      &::placeholder {
+        color: #cccccc55;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #cccccc;
+      }
+    }
 
     button {
-      flex-grow: 1;
-    }
-  }
+      height: 1.75rem;
+      background-color: transparent;
+      padding: 0 0.5rem;
+      border: 1px solid #cccccc55;
+      border-radius: 0.25rem;
 
-  input[type='text'] {
-    min-width: 0;
-    height: 1.75rem;
-    background-color: transparent;
-    padding: 0 0.5rem;
-    border: 1px solid #cccccc55;
-    border-radius: 0.25rem;
+      &:focus {
+        outline: none;
+        border-color: #cccccc;
+      }
 
-    &::placeholder {
-      color: #cccccc55;
-    }
+      &:enabled:hover {
+        background-color: #cccccc55;
+      }
 
-    &:focus {
-      outline: none;
-      border-color: #cccccc;
-    }
-  }
-
-  button {
-    height: 1.75rem;
-    background-color: transparent;
-    padding: 0 0.5rem;
-    border: 1px solid #cccccc55;
-    border-radius: 0.25rem;
-
-    &:focus {
-      outline: none;
-      border-color: #cccccc;
+      &[aria-invalid='true'] {
+        border-color: #ff2c2c82;
+        color: #ff2c2c;
+      }
     }
 
-    &:enabled:hover {
-      background-color: #cccccc55;
+    &,
+    * {
+      box-sizing: border-box;
     }
-
-    &[aria-invalid='true'] {
-      border-color: #ff2c2c82;
-      color: #ff2c2c;
-    }
-  }
-
-  * {
-    box-sizing: border-box;
   }
 }

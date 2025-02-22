@@ -184,6 +184,8 @@ const appendWorkMenus = () => {
     const hasMenu = workContainer.getElementsByClassName('pixiv-quick-tag-work-menu').length > 0;
     if (hasMenu) return;
 
+    workContainer.classList.add('pixiv-quick-tag-work-container');
+
     const workMenu = document.createElement('form');
     workContainer.appendChild(workMenu);
     workMenu.classList.add('pixiv-quick-tag-work-menu');
