@@ -1,6 +1,11 @@
 const root = document.getElementById('root');
 if (!root) throw new Error('Pixiv Quick Tag could not find #root element');
 
+let activeWorkMenuWrapper = null;
+
+const isPointInsideRect = ({ left, right, top, bottom }, x, y, shrink = 0) =>
+  x >= left + shrink && x <= right - shrink && y >= top + shrink && y <= bottom - shrink;
+
 const updateBookmark = (workId, tags, isPrivate) =>
   fetch('https://www.pixiv.net/ajax/illusts/bookmarks/add', {
     credentials: 'include',
@@ -177,50 +182,84 @@ const appendApplySection = (workMenu) => {
   applySection.appendChild(privateLabel);
 };
 
-const appendWorkMenus = () => {
+const hideWorkMenu = () => {
+  activeWorkMenuWrapper?.remove();
+  activeWorkMenuWrapper = null;
+};
+
+const showWorkMenu = (workContainer) => {
+  const workMenuWrapper = document.createElement('div');
+  document.body.appendChild(workMenuWrapper);
+  workMenuWrapper.classList.add('pixiv-quick-tag-work-menu-wrapper');
+
+  activeWorkMenuWrapper?.remove();
+  activeWorkMenuWrapper = workMenuWrapper;
+
+  const containerRect = workContainer.getBoundingClientRect();
+  workMenuWrapper.style.top = containerRect.top + containerRect.height - 10 + 'px';
+  workMenuWrapper.style.left = containerRect.left + 'px';
+  workMenuWrapper.style.width = containerRect.width + 'px';
+
+  const isContainerOrMenuHovered = (mouseX, mouseY) => {
+    const containerRect = workContainer.getBoundingClientRect();
+    const menuRect = workMenuWrapper.getBoundingClientRect();
+    const isContainerHovered = isPointInsideRect(containerRect, mouseX, mouseY, 5);
+    const isMenuHovered = isPointInsideRect(menuRect, mouseX, mouseY, 5);
+
+    return isContainerHovered || isMenuHovered;
+  };
+
+  const handleMouseLeave = (event) =>
+    !isContainerOrMenuHovered(event.clientX, event.clientY) && hideWorkMenu();
+
+  workContainer.addEventListener('mouseleave', handleMouseLeave);
+  workMenuWrapper.addEventListener('mouseleave', handleMouseLeave);
+
+  const workMenu = document.createElement('form');
+  workMenuWrapper.appendChild(workMenu);
+  workMenu.classList.add('pixiv-quick-tag-work-menu');
+
+  appendPinnedTagsSection(workMenu);
+  appendInputSection(workMenu);
+  appendApplySection(workMenu);
+
+  workMenu.onsubmit = async (event) => {
+    event.preventDefault();
+
+    const applyButton = workMenu.querySelector('button[type="submit"]');
+    applyButton.disabled = true;
+    applyButton.ariaInvalid = false;
+
+    const workId = workLink.href.split('/').pop();
+    const formData = new FormData(workMenu);
+    const tags = formData.getAll('tags').slice(0, -1);
+    const isPrivate = formData.get('private') === 'on';
+
+    const response = await updateBookmark(workId, tags, isPrivate);
+    if (response.ok) {
+      applyButton.textContent = 'Applied';
+    } else {
+      applyButton.textContent = 'Error';
+      applyButton.ariaInvalid = true;
+    }
+    applyButton.disabled = false;
+  };
+};
+
+const attachWorkMenus = () => {
   const workLinks = root.querySelectorAll('a[data-gtm-value][href^="/artworks/"]');
   workLinks.forEach((workLink) => {
     const workContainer = workLink.parentElement.parentElement.parentElement;
-    const hasMenu = workContainer.getElementsByClassName('pixiv-quick-tag-work-menu').length > 0;
+    const hasMenu = workContainer.classList.contains('pixiv-quick-tag-work-container');
     if (hasMenu) return;
 
     workContainer.classList.add('pixiv-quick-tag-work-container');
-
-    const workMenuWrapper = document.createElement('div');
-    workContainer.appendChild(workMenuWrapper);
-    workMenuWrapper.classList.add('pixiv-quick-tag-work-menu-wrapper');
-
-    const workMenu = document.createElement('form');
-    workMenuWrapper.appendChild(workMenu);
-    workMenu.classList.add('pixiv-quick-tag-work-menu');
-
-    appendPinnedTagsSection(workMenu);
-    appendInputSection(workMenu);
-    appendApplySection(workMenu);
-
-    workMenu.onsubmit = async (event) => {
-      event.preventDefault();
-
-      const applyButton = workMenu.querySelector('button[type="submit"]');
-      applyButton.disabled = true;
-      applyButton.ariaInvalid = false;
-
-      const workId = workLink.href.split('/').pop();
-      const formData = new FormData(workMenu);
-      const tags = formData.getAll('tags').slice(0, -1);
-      const isPrivate = formData.get('private') === 'on';
-
-      const response = await updateBookmark(workId, tags, isPrivate);
-      if (response.ok) {
-        applyButton.textContent = 'Applied';
-      } else {
-        applyButton.textContent = 'Error';
-        applyButton.ariaInvalid = true;
-      }
-      applyButton.disabled = false;
-    };
+    workContainer.addEventListener('mouseenter', () => showWorkMenu(workContainer));
   });
 };
 
-const rootObserver = new MutationObserver(appendWorkMenus);
+window.addEventListener('scroll', hideWorkMenu);
+window.addEventListener('resize', hideWorkMenu);
+
+const rootObserver = new MutationObserver(attachWorkMenus);
 rootObserver.observe(root, { childList: true, subtree: true });
