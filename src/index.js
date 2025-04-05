@@ -1,5 +1,5 @@
-const root = document.getElementById('root');
-if (!root) throw new Error('Pixiv Quick Tag could not find #root element');
+const root = document.getElementById('__next');
+if (!root) throw new Error('Pixiv Quick Tag could not find #__next element');
 
 let activeWorkMenuWrapper = null;
 
@@ -187,7 +187,7 @@ const hideWorkMenu = () => {
   activeWorkMenuWrapper = null;
 };
 
-const showWorkMenu = (workContainer) => {
+const showWorkMenu = (workContainer, workId) => {
   const workMenuWrapper = document.createElement('div');
   document.body.appendChild(workMenuWrapper);
   workMenuWrapper.classList.add('pixiv-quick-tag-work-menu-wrapper');
@@ -230,7 +230,6 @@ const showWorkMenu = (workContainer) => {
     applyButton.disabled = true;
     applyButton.ariaInvalid = false;
 
-    const workId = workLink.href.split('/').pop();
     const formData = new FormData(workMenu);
     const tags = formData.getAll('tags').slice(0, -1);
     const isPrivate = formData.get('private') === 'on';
@@ -253,8 +252,9 @@ const attachWorkMenus = () => {
     const hasMenu = workContainer.classList.contains('pixiv-quick-tag-work-container');
     if (hasMenu) return;
 
+    const workId = workLink.href.split('/').pop();
     workContainer.classList.add('pixiv-quick-tag-work-container');
-    workContainer.addEventListener('mouseenter', () => showWorkMenu(workContainer));
+    workContainer.addEventListener('mouseenter', () => showWorkMenu(workContainer, workId));
   });
 };
 
