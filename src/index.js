@@ -6,12 +6,16 @@ let activeWorkMenuWrapper = null;
 const isPointInsideRect = ({ left, right, top, bottom }, x, y, shrink = 0) =>
   x >= left + shrink && x <= right - shrink && y >= top + shrink && y <= bottom - shrink;
 
-const updateBookmark = (workId, tags, isPrivate) =>
-  fetch('https://www.pixiv.net/ajax/illusts/bookmarks/add', {
+const updateBookmark = (workId, tags, isPrivate) => {
+  // TODO: expect this hell to break very soon, lol
+  const nextData = JSON.parse(document.getElementById('__NEXT_DATA__').innerText);
+  const token = JSON.parse(nextData.props.pageProps.serverSerializedPreloadedState).api.token;
+
+  return fetch('https://www.pixiv.net/ajax/illusts/bookmarks/add', {
     credentials: 'include',
     headers: {
       'content-type': 'application/json',
-      'x-csrf-token': localStorage.getItem('xzToken'),
+      'x-csrf-token': token,
     },
     method: 'POST',
     body: JSON.stringify({
@@ -21,6 +25,7 @@ const updateBookmark = (workId, tags, isPrivate) =>
       tags: tags,
     }),
   });
+};
 
 const getPinnedTags = () => {
   try {
